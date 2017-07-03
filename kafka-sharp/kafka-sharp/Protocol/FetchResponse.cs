@@ -8,7 +8,7 @@ using System.IO.Compression;
 using System.Net;
 using Kafka.Common;
 using Kafka.Public;
-#if !NET_CORE
+#if !NETSTANDARD1_3
 using Snappy;
 #endif
 namespace Kafka.Protocol
@@ -236,7 +236,7 @@ namespace Kafka.Protocol
             {
                 if (codec == CompressionCodec.Snappy)
                 {
-#if NET_CORE
+#if NETSTANDARD1_3
                     throw new NotImplementedException();
 #else
                     uncompressed.SetLength(SnappyCodec.GetUncompressedLength(body, offset, length));

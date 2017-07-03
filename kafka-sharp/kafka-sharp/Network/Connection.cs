@@ -8,7 +8,7 @@ using System.Net.Sockets;
 using System.Threading.Tasks;
 using Kafka.Common;
 using Kafka.Public;
-#if NET_CORE
+#if NETSTANDARD1_3
 using System.Threading;
 #endif
 
@@ -138,7 +138,7 @@ namespace Kafka.Network
 
         public Task ConnectAsync()
         {
-#if NET_CORE
+#if NETSTANDARD1_3
             return this.ConnectAsync(_endPoint); // same as before, it uses FromAsync() helper
 #else
             // Use old Begin/End API, this is much simpler than using Socket.Async
@@ -247,7 +247,7 @@ namespace Kafka.Network
             int sendBufferSize = DefaultBufferSize,
             int receiveBufferSize = DefaultBufferSize)
             : this(
-#if NET_CORE
+#if NETSTANDARD1_3
                 new IPEndPoint(Dns.GetHostAddressesAsync(host).Result[0], port),
 #else
                 new IPEndPoint(Dns.GetHostAddresses(host)[0], port),

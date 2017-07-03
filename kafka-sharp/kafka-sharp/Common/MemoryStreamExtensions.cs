@@ -1,4 +1,4 @@
-﻿#if NET_CORE
+﻿#if NETSTANDARD1_3
 using System;
 using System.IO;
 
