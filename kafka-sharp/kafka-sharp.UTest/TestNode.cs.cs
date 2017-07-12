@@ -674,11 +674,8 @@ namespace tests_kafka_sharp
                 Assert.AreSame(node, n);
                 timeoutEvent.Set();
             };
-#if NETCOREAPP2_0
-            Assert.ThrowsAsync<TimeoutException>(async () => await node.FetchMetadata());
-#else
-            Assert.Throws<TimeoutException>(async () => await node.FetchMetadata());
-#endif
+
+            Assert.Throws<TimeoutException>(()=>node.FetchMetadata().GetAwaiter().GetResult());
             Assert.IsFalse(isDead);
 
             timeoutEvent.WaitOne();
@@ -696,11 +693,9 @@ namespace tests_kafka_sharp
                     Assert.AreSame(node, n);
                     ex = e;
                 };
-#if NETCOREAPP2_0
-            var thrown = Assert.ThrowsAsync<Exception>(async () => await node.FetchMetadata());
-#else
-            var thrown = Assert.Throws<Exception>(async () => await node.FetchMetadata());
-#endif
+
+            var thrown = Assert.Throws<Exception>(()=>node.FetchMetadata().GetAwaiter().GetResult());
+
             Assert.AreSame(thrown, ex);
         }
 
@@ -949,11 +944,9 @@ namespace tests_kafka_sharp
             var config = new Configuration { ProduceBatchSize = 1, ProduceBufferingTime = TimeSpan.FromMilliseconds(15) };
             var node =
                 new Node("[Failing node]", () => new SendFailingConnectionMock(), new DummySerialization(), config, 1);
-#if NETCOREAPP2_0
-            Assert.ThrowsAsync<TransportException>(async () => await node.FetchMetadata());
-#else
-            Assert.Throws<TransportException>(async () => await node.FetchMetadata());
-#endif
+
+            Assert.Throws<TransportException>(()=>node.FetchMetadata().GetAwaiter().GetResult());
+
         }
 
         [Test]
@@ -962,11 +955,8 @@ namespace tests_kafka_sharp
             var config = new Configuration { ProduceBatchSize = 1, ProduceBufferingTime = TimeSpan.FromMilliseconds(15) };
             var node =
                 new Node("[Failing node]", () => new ReceiveFailingConnectionMock(), new DummySerialization(), config, 1);
-#if NETCOREAPP2_0
-            Assert.ThrowsAsync<TransportException>(async () => await node.FetchMetadata());
-#else
-            Assert.Throws<TransportException>(async () => await node.FetchMetadata());
-#endif
+
+            Assert.Throws<TransportException>(() => node.FetchMetadata().GetAwaiter().GetResult());
         }
 
         [Test]
