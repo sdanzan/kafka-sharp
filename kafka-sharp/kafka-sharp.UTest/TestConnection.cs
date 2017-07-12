@@ -118,7 +118,7 @@ namespace tests_kafka_sharp
                         Array.Copy(buffer, 5, sbuffer, 8, buffer.Length - 5);
                         await stream.WriteAsync(sbuffer, 0, sbuffer.Length, _cancel.Token).ConfigureAwait(false);
                     }
-#if NETCOREAPP1_0
+#if NETCOREAPP2_0
                     client.Dispose(); // Same behavior as Close() called Dispose() internally
 #else
                     client.Close();
@@ -127,7 +127,7 @@ namespace tests_kafka_sharp
                 catch
                 {
                     if (client != null)
-#if NETCOREAPP1_0
+#if NETCOREAPP2_0
                         client.Dispose(); // Same behavior as Close() called Dispose() internally
 #else
                         client.Close();
@@ -175,7 +175,7 @@ namespace tests_kafka_sharp
             socket.Setup(s => s.CreateEventArgs()).Returns(new RealSocketAsyncEventArgs());
             socket.Setup(s => s.Connected).Returns(false);
             var connection = new Connection(new IPEndPoint(0, 0), _ => socket.Object, BPool, RPool, 1024, 1024);
-#if NETCOREAPP1_0
+#if NETCOREAPP2_0
             var ex = Assert.ThrowsAsync<TransportException>(async () => await connection.SendAsync(0, new ReusableMemoryStream(null), true));
 #else
             var ex = Assert.Throws<TransportException>(async () => await connection.SendAsync(0, new ReusableMemoryStream(null), true));
@@ -343,7 +343,7 @@ namespace tests_kafka_sharp
                 .Returns(true)
                 .Callback((ISocketAsyncEventArgs a) => mocked[a].Raise(_ => _.Completed += null, socket.Object, a));
             var connection = new Connection(new IPEndPoint(0, 0), _ => socket.Object, BPool, RPool, 1024, 1024);
-#if NETCOREAPP1_0
+#if NETCOREAPP2_0
             var e = Assert.ThrowsAsync<TransportException>(async () => await connection.SendAsync(12, buffer, true));
 #else
             var e = Assert.Throws<TransportException>(async () => await connection.SendAsync(12, buffer, true));
@@ -369,7 +369,7 @@ namespace tests_kafka_sharp
                 .Returns(true)
                 .Callback((ISocketAsyncEventArgs a) => mocked[a].Raise(_ => _.Completed += null, socket.Object, a));
             var connection = new Connection(new IPEndPoint(0, 0), _ => socket.Object, BPool, RPool, 1024, 1024);
-#if NETCOREAPP1_0
+#if NETCOREAPP2_0
             var e = Assert.ThrowsAsync<TransportException>(async () => await connection.SendAsync(12, buffer, true));
 #else
             var e = Assert.Throws<TransportException>(async () => await connection.SendAsync(12, buffer, true));
@@ -377,7 +377,7 @@ namespace tests_kafka_sharp
             Assert.That(e.Error, Is.EqualTo(TransportError.WriteError));
             Assert.IsInstanceOf<SocketException>(e.InnerException);
             var se = e.InnerException as SocketException;
-#if NETCOREAPP1_0
+#if NETCOREAPP2_0
             Assert.AreEqual(se.SocketErrorCode, SocketError.NetworkReset);
 #else
             Assert.That(se.ErrorCode, Is.EqualTo((int)SocketError.NetworkReset));
@@ -402,7 +402,7 @@ namespace tests_kafka_sharp
                     s.Send(It.IsAny<byte[]>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<SocketFlags>(), out error))
                 .Throws<InvalidOperationException>();
             var connection = new Connection(new IPEndPoint(0, 0), _ => socket.Object, BPool, RPool, 1024, 1024);
-#if NETCOREAPP1_0
+#if NETCOREAPP2_0
             var e = Assert.ThrowsAsync<TransportException>(async () => await connection.SendAsync(12, buffer, true));
 #else
             var e = Assert.Throws<TransportException>(async () => await connection.SendAsync(12, buffer, true));
@@ -431,7 +431,7 @@ namespace tests_kafka_sharp
             socket.Setup(s => s.SendAsync(It.IsAny<ISocketAsyncEventArgs>()))
                 .Throws<InvalidOperationException>();
             var connection = new Connection(new IPEndPoint(0, 0), _ => socket.Object, BPool, RPool, 1024, 1024);
-#if NETCOREAPP1_0
+#if NETCOREAPP2_0
             var e = Assert.ThrowsAsync<TransportException>(async () => await connection.SendAsync(12, buffer, true));
 #else
             var e = Assert.Throws<TransportException>(async () => await connection.SendAsync(12, buffer, true));
@@ -588,7 +588,7 @@ namespace tests_kafka_sharp
             socket.Setup(s => s.CreateEventArgs()).Returns(new RealSocketAsyncEventArgs());
             socket.Setup(s => s.ConnectAsync()).Throws(new SocketException((int) SocketError.ConnectionRefused));
             var connection = new Connection(new IPEndPoint(0, 0), _ => socket.Object, BPool, RPool, 1024, 1024);
-#if NETCOREAPP1_0
+#if NETCOREAPP2_0
             var exception = Assert.ThrowsAsync<TransportException>(async () => await connection.ConnectAsync());
 #else
             var exception = Assert.Throws<TransportException>(async () => await connection.ConnectAsync());

@@ -156,7 +156,7 @@ namespace tests_kafka_sharp
                 node.Setup(n => n.FetchMetadata()).Returns(failed.Task);
             }
             _cluster.Start();
-#if NETCOREAPP1_0
+#if NETCOREAPP2_0
             Assert.ThrowsAsync<TimeoutException>(async () => await _cluster.RequireNewRoutingTable());
 #else
             Assert.Throws<TimeoutException>(async () => await _cluster.RequireNewRoutingTable());
